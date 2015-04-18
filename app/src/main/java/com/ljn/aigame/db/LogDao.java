@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ljn.aigame.domain.ReciteLog;
+import com.ljn.aigame.engine.BlockMatrxEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,22 @@ public class LogDao {
         db.close();
         return logs;
     }
+
+    public List<ReciteLog> findAllXWinLogs() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor query = db.query(ReciteLog.TABLE_NAME, new String[]{ReciteLog.RECITE_ID, ReciteLog.RECITE_LOG, ReciteLog.WIN_TYPE}, "win_type = ?", new String[]{String.valueOf(BlockMatrxEngine.X_WIN)}, null, null, null);
+        List<ReciteLog> logs = new ArrayList<ReciteLog>();
+        while (query.moveToNext()) {
+            int reciteId = query.getInt(0);
+            String reciteLog = query.getString(1);
+            int winType = query.getInt(2);
+            logs.add(new ReciteLog(reciteId, reciteLog, winType));
+        }
+        query.close();
+        db.close();
+        return logs;
+    }
+
 
     public long addLog(ReciteLog log) {
         SQLiteDatabase db = helper.getReadableDatabase();
