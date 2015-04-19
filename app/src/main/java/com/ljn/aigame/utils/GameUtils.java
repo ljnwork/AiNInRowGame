@@ -254,19 +254,34 @@ public class GameUtils {
      * @return
      */
     public static ReciteLog getReverseReciteLog(ReciteLog log) {
-        char char_x = String.valueOf(Block.BLOCK_X).charAt(0);
-        char char_o = String.valueOf(Block.BLOCK_O).charAt(0);
         if (log.getWinType() == BlockMatrxEngine.O_WIN) {
             log.setWinType(BlockMatrxEngine.X_WIN);
             String reciteLog = log.getReciteLog();
-            reciteLog = reciteLog.replace(char_x, char_o);
+            reciteLog = getReverseLogString(reciteLog);
             log.setReciteLog(reciteLog);
         } else if (log.getWinType() == BlockMatrxEngine.X_WIN) {
             log.setWinType(BlockMatrxEngine.O_WIN);
             String reciteLog = log.getReciteLog();
-            reciteLog = reciteLog.replace(char_o, char_x);
+            reciteLog = getReverseLogString(reciteLog);
             log.setReciteLog(reciteLog);
         }
         return log;
+    }
+
+    public static String getReverseLogString(String log) {
+        char char_x = String.valueOf(Block.BLOCK_X).charAt(0);
+        char char_o = String.valueOf(Block.BLOCK_O).charAt(0);
+        char char_blank = String.valueOf(Block.BLOCK_BLANK).charAt(0);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < log.length(); i++) {
+            if (log.charAt(i) == char_o) {
+                sb.append(char_x);
+            } else if (log.charAt(i) == char_x) {
+                sb.append(char_o);
+            } else {
+                sb.append(char_blank);
+            }
+        }
+        return sb.toString();
     }
 }

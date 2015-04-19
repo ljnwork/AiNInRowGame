@@ -45,17 +45,24 @@ public class LogDao {
      * @return
      */
     public List<ReciteLog> findAllAnalyseXWinLogs() {
-        List<ReciteLog> allAnalysedLogs = findAllLogs();
-        List<ReciteLog> resultLogs = new ArrayList<ReciteLog>();
-        for (ReciteLog reciteLog : allAnalysedLogs) {
-            if (reciteLog.getWinType() == BlockMatrxEngine.O_WIN) {
-                reciteLog = GameUtils.getReverseReciteLog(reciteLog);
-                resultLogs.add(reciteLog);
-            } else if (reciteLog.getWinType() == BlockMatrxEngine.X_WIN) {
-                resultLogs.add(reciteLog);
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor query = db.query(ReciteLog.TABLE_NAME, new String[]{ReciteLog.RECITE_ID, ReciteLog.RECITE_LOG, ReciteLog.WIN_TYPE}, "win_type != ?", new String[]{String.valueOf(BlockMatrxEngine.NO_WINNER)}, null, null, null);
+        List<ReciteLog> logs = new ArrayList<ReciteLog>();
+        while (query.moveToNext()) {
+            int reciteId = query.getInt(0);
+            String reciteLog = query.getString(1);
+            int winType = query.getInt(2);
+            if (winType == BlockMatrxEngine.O_WIN) {
+                logs.add(GameUtils.getReverseReciteLog(new ReciteLog(reciteId, reciteLog, winType)));
+            } else if (winType == BlockMatrxEngine.X_WIN) {
+                logs.add(new ReciteLog(reciteId, reciteLog, winType));
             }
         }
-        return resultLogs;
+        query.close();
+        db.close();
+
+        return logs;
     }
 
     public List<ReciteLog> findAllXWinLogs() {
