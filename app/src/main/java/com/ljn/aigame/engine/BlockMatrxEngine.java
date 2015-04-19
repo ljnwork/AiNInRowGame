@@ -1,13 +1,12 @@
 package com.ljn.aigame.engine;
 
-import android.util.Log;
-
 import com.ljn.aigame.domain.Block;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 生成数据的引擎
  * Created by lijianan on 15-4-15.
  */
 public class BlockMatrxEngine {
