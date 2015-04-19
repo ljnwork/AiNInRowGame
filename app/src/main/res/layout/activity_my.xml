@@ -9,13 +9,13 @@
     tools:context=".MyActivity">
 
     <GridView
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
+        android:verticalSpacing="1dp"
+        android:horizontalSpacing="1dp"
         android:background="#88ffff"
         android:columnWidth="90dp"
         android:gravity="center"
         android:id="@+id/gv_game"
-        android:numColumns="3"
+        android:numColumns="14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

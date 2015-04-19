@@ -19,7 +19,7 @@ public class GameGridAdapter extends BaseAdapter {
     private List<Block> mBlockList;
     private Context mContext;
 
-    public GameGridAdapter(Context mContext,List<Block> mBlockList) {
+    public GameGridAdapter(Context mContext, List<Block> mBlockList) {
         this.mContext = mContext;
         this.mBlockList = mBlockList;
     }
@@ -41,10 +41,10 @@ public class GameGridAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        View inflateView = View.inflate(mContext,R.layout.item_game_gridview,null);
+        View inflateView = View.inflate(mContext, R.layout.item_game_gridview, null);
         TextView mBlockTextView = (TextView) inflateView.findViewById(R.id.tv_item);
         int stats = mBlockList.get(i).getBlockStats();
-        switch (stats){
+        switch (stats) {
             case Block.BLOCK_BLANK:
                 mBlockTextView.setText(" ");
                 break;

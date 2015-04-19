@@ -10,7 +10,11 @@ import java.util.List;
  * Created by lijianan on 15-4-15.
  */
 public class BlockMatrxEngine {
-
+    public static final int NO_WINNER = 0;
+    public static final int O_WIN = 1;
+    public static final int X_WIN = 2;
+    public static final int ROW_COUNT = 14;//14 x 14 的棋盘
+    public static final int COUNT_OF_WIN_PIECE = 5;//赢 需要连成一条线的棋子个数
     private List<Block> blockList;
 
     public BlockMatrxEngine(List<Block> blockList) {
@@ -25,8 +29,8 @@ public class BlockMatrxEngine {
      */
     public List<Block> getCosList(int cosNum) {
         List<Block> cosList = new ArrayList<Block>();
-        for (int i = 0; i < 3; i++) {
-            cosList.add(blockList.get(cosNum + 3 * i));
+        for (int i = 0; i < ROW_COUNT; i++) {
+            cosList.add(blockList.get(cosNum + ROW_COUNT * i));
         }
         return cosList;
     }
@@ -39,52 +43,62 @@ public class BlockMatrxEngine {
      */
     public List<Block> getRowList(int rowNum) {
         List<Block> rowList = new ArrayList<Block>();
-        for (int i = 0; i < 3; i++) {
-            rowList.add(blockList.get(i + rowNum * 3));
+        for (int i = 0; i < ROW_COUNT; i++) {
+            rowList.add(blockList.get(i + rowNum * ROW_COUNT));
         }
         return rowList;
     }
 
-    public int getLTtoRBXBlockCount() {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_LTRB, 0, Block.BLOCK_X);
+    public int getLTtoRBXBlockCount(int i) {
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_LTRB, i, Block.BLOCK_X);
     }
 
-    public int getLTtoRBOBlockCount() {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_LTRB, 0, Block.BLOCK_O);
+    public int getLTtoRBOBlockCount(int i) {
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_LTRB, i, Block.BLOCK_O);
     }
 
-    public int getRTtoLBXBlockCount() {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_RTLB, 0, Block.BLOCK_X);
+    public int getRTtoLBXBlockCount(int i) {
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_RTLB, i, Block.BLOCK_X);
     }
 
-    public int getRTtoLBOBlockCount() {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_RTLB, 0, Block.BLOCK_O);
+    public int getRTtoLBOBlockCount(int i) {
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_RTLB, i, Block.BLOCK_O);
     }
 
 
     /**
      * 获取左上角到右下角对角线到BlockList
      *
+     * @param rowIndex 以左下角为第0列 到右上角的列的编号
      * @return
      */
-    public List<Block> getLTtoRBList() {
+    public List<Block> getLTtoRBList(int rowIndex) {
+        int x = rowIndex > ROW_COUNT - 1 ? rowIndex - (ROW_COUNT - 1) : 0;
+        int y = rowIndex > ROW_COUNT - 1 ? 0 : (ROW_COUNT - 1) - rowIndex;
         List<Block> ltTorbList = new ArrayList<Block>();
-        ltTorbList.add(blockList.get(0));
-        ltTorbList.add(blockList.get(4));
-        ltTorbList.add(blockList.get(8));
+        while (x < ROW_COUNT && y < ROW_COUNT) {
+            ltTorbList.add(blockList.get(x + y * ROW_COUNT));
+            x++;
+            y++;
+        }
         return ltTorbList;
     }
 
     /**
      * 获取右上角到左下角对角线到BlockList
      *
+     * @param rowIndex 以左上角为第0列 到右下角的列的编号
      * @return
      */
-    public List<Block> getRTtoLBList() {
+    public List<Block> getRTtoLBList(int rowIndex) {
+        int x = rowIndex > ROW_COUNT - 1 ? ROW_COUNT - 1 : rowIndex;
+        int y = rowIndex > ROW_COUNT - 1 ? ROW_COUNT - 1 : 0;
         List<Block> rtTolbList = new ArrayList<Block>();
-        rtTolbList.add(blockList.get(2));
-        rtTolbList.add(blockList.get(4));
-        rtTolbList.add(blockList.get(6));
+        while (x >= 0 && y < ROW_COUNT) {
+            rtTolbList.add(blockList.get(x + y * ROW_COUNT));
+            x--;
+            y++;
+        }
         return rtTolbList;
     }
 
@@ -95,7 +109,7 @@ public class BlockMatrxEngine {
      * @return
      */
     public int getRowXBlockCount(int rowNum) {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_ROW, rowNum, Block.BLOCK_X);
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_ROW, rowNum, Block.BLOCK_X);
     }
 
     /**
@@ -105,7 +119,7 @@ public class BlockMatrxEngine {
      * @return
      */
     public int getRowOBlockCount(int rowNum) {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_ROW, rowNum, Block.BLOCK_O);
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_ROW, rowNum, Block.BLOCK_O);
     }
 
     /**
@@ -115,7 +129,7 @@ public class BlockMatrxEngine {
      * @return
      */
     public int getCosXBlockCount(int cosNum) {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_COS, cosNum, Block.BLOCK_X);
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_COS, cosNum, Block.BLOCK_X);
     }
 
     /**
@@ -125,12 +139,8 @@ public class BlockMatrxEngine {
      * @return
      */
     public int getCosOBlockCount(int cosNum) {
-        return getRow_Or_Cos_and_X_or_YBlockCount(IS_COS, cosNum, Block.BLOCK_O);
+        return getRow_Or_Cos_and_X_or_OBlockCount(IS_COS, cosNum, Block.BLOCK_O);
     }
-
-    public static final int NO_WINNER = 0;
-    public static final int O_WIN = 1;
-    public static final int X_WIN = 2;
 
 
     /**
@@ -140,10 +150,18 @@ public class BlockMatrxEngine {
      */
     public int getWinner() {
 
-        for (int i = 0; i < 3; i++) {
-            if (getRowXBlockCount(i) == 3 || getCosXBlockCount(i) == 3 || getLTtoRBXBlockCount() == 3 || getRTtoLBXBlockCount() == 3) {
+        for (int i = 0; i < ROW_COUNT; i++) {
+            if (getRowXBlockCount(i) == COUNT_OF_WIN_PIECE || getCosXBlockCount(i) == COUNT_OF_WIN_PIECE) {
                 return X_WIN;
-            } else if (getRowOBlockCount(i) == 3 || getCosOBlockCount(i) == 3 || getLTtoRBOBlockCount() == 3 || getRTtoLBOBlockCount() == 3) {
+            } else if (getRowOBlockCount(i) == COUNT_OF_WIN_PIECE || getCosOBlockCount(i) == COUNT_OF_WIN_PIECE || getLTtoRBOBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(i) == COUNT_OF_WIN_PIECE) {
+                return O_WIN;
+            }
+        }
+
+        for (int i = 0; i < ROW_COUNT * 2 - 1; i++) {
+            if (getLTtoRBXBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBXBlockCount(i) == COUNT_OF_WIN_PIECE) {
+                return X_WIN;
+            } else if (getLTtoRBOBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(i) == COUNT_OF_WIN_PIECE) {
                 return O_WIN;
             }
         }
@@ -156,7 +174,15 @@ public class BlockMatrxEngine {
     public static final int IS_LTRB = 2;
     public static final int IS_RTLB = 3;
 
-    private int getRow_Or_Cos_and_X_or_YBlockCount(int type, int num, int status) {
+    /**
+     * 获取 某一行或者某一列或者左上到右下或者右上到坐下的 X或者O的总数
+     *
+     * @param type
+     * @param num
+     * @param status
+     * @return
+     */
+    private int getRow_Or_Cos_and_X_or_OBlockCount(int type, int num, int status) {
         List<Block> list;
         switch (type) {
             case IS_ROW:
@@ -166,10 +192,10 @@ public class BlockMatrxEngine {
                 list = getCosList(num);
                 break;
             case IS_LTRB:
-                list = getLTtoRBList();
+                list = getLTtoRBList(num);
                 break;
             case IS_RTLB:
-                list = getRTtoLBList();
+                list = getRTtoLBList(num);
                 break;
             default:
                 list = new ArrayList<Block>();

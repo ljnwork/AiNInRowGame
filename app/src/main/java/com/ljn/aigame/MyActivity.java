@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -161,7 +160,7 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         mIsGameFinished = false;
         mIsUserPlay = true;
         mBlockList = new ArrayList<Block>();
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < BlockMatrxEngine.ROW_COUNT * BlockMatrxEngine.ROW_COUNT; i++) {
             mBlockList.add(new Block());
         }
         mGameAdapter = new GameGridAdapter(MyActivity.this, mBlockList);
