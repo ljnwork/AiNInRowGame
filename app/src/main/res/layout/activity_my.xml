@@ -51,13 +51,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button
-        android:text="study"
+    <RadioGroup
+        android:id="@+id/rg_mode_switch"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:id="@+id/bt_study_or_play"
+        android:contentDescription="模式"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rb_study"
+            android:checked="true"
+            android:text="study"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <RadioButton
+            android:text="play"
+            android:id="@+id/rb_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RadioGroup>
 
     <ScrollView
         android:layout_above="@id/bt_restart"

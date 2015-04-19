@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,11 +34,11 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     private BlockMatrxEngine mGameEngine;
     private Button mRestartButton;
     private Button mClearlogButton;
-    private Button mStudyOrPlayButton;
     private int mReciteID = 0;
     private boolean mIsGameFinished = false;
     private TextView mReciteLogTextView;
     private LogDao mLogDao;
+    private RadioGroup mModeSwitchRadioGroup;
     private int mCurrentMode = STUDY_MODE;
 
     @Override
@@ -49,7 +51,7 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         mReciteLogTextView = (TextView) findViewById(R.id.tv_recitelog);
         mRestartButton = (Button) findViewById(R.id.bt_restart);
         mClearlogButton = (Button) findViewById(R.id.bt_clear);
-        mStudyOrPlayButton = (Button) findViewById(R.id.bt_study_or_play);
+        mModeSwitchRadioGroup = (RadioGroup) findViewById(R.id.rg_mode_switch);
         clearReciteLog();
         initData();
         setListener();
@@ -60,28 +62,28 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     private int mXStepCount = 0;
 
     private void setListener() {
-        mStudyOrPlayButton.setOnClickListener(this);
         mClearlogButton.setOnClickListener(this);
         mRestartButton.setOnClickListener(this);
-        mGameGridView.setOnClickListener(this);
+        mModeSwitchRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                int checkedRadioButtonId = radioGroup.getCheckedRadioButtonId();
+                switch (checkedRadioButtonId) {
+                    case R.id.rb_study:
+                        mCurrentMode = STUDY_MODE;
+                        break;
+                    case R.id.rb_play:
+                        mCurrentMode = PLAY_MODE;
+                        break;
+                }
+            }
+        });
         mGameGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 userTurn(i);
             }
         });
-    }
-
-    private void switchStudyOrPlay() {
-        mCurrentMode = mCurrentMode == STUDY_MODE ? PLAY_MODE : STUDY_MODE;
-        switch (mCurrentMode) {
-            case PLAY_MODE:
-                mStudyOrPlayButton.setText("play");
-                break;
-            case STUDY_MODE:
-                mStudyOrPlayButton.setText("study");
-                break;
-        }
     }
 
     private void userTurn(int i) {
@@ -130,13 +132,17 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         int winner = mGameEngine.getWinner();
         if (winner == BlockMatrxEngine.O_WIN) {
             Toast.makeText(getApplicationContext(), "O WIN", Toast.LENGTH_SHORT).show();
+            recordGameLog(winner);
+            mIsGameFinished = true;
         } else if (winner == BlockMatrxEngine.X_WIN) {
             Toast.makeText(getApplicationContext(), "X WIN", Toast.LENGTH_SHORT).show();
+            recordGameLog(winner);
+            mIsGameFinished = true;
         } else if (GameUtils.getBlankPosCount(mBlockList) == BlockMatrxEngine.NO_WINNER) {
             Toast.makeText(getApplicationContext(), "NO WINNER", Toast.LENGTH_SHORT).show();
+            recordGameLog(winner);
+            mIsGameFinished = true;
         }
-        recordGameLog(winner);
-        mIsGameFinished = true;
     }
 
     private void recordGameLog(int winType) {
@@ -172,9 +178,6 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         switch (view.getId()) {
             case R.id.bt_clear:
                 clearReciteLog();
-                break;
-            case R.id.bt_study_or_play:
-                switchStudyOrPlay();
                 break;
             case R.id.bt_restart:
                 initData();
