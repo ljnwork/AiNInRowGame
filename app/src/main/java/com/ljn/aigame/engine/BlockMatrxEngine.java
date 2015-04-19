@@ -92,7 +92,7 @@ public class BlockMatrxEngine {
      */
     public List<Block> getRTtoLBList(int rowIndex) {
         int x = rowIndex > ROW_COUNT - 1 ? ROW_COUNT - 1 : rowIndex;
-        int y = rowIndex > ROW_COUNT - 1 ? ROW_COUNT - 1 : 0;
+        int y = rowIndex > ROW_COUNT - 1 ? rowIndex - (ROW_COUNT - 1) : 0;
         List<Block> rtTolbList = new ArrayList<Block>();
         while (x >= 0 && y < ROW_COUNT) {
             rtTolbList.add(blockList.get(x + y * ROW_COUNT));
