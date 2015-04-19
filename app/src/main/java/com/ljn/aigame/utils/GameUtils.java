@@ -5,6 +5,7 @@ import android.content.Context;
 import com.ljn.aigame.db.LogDao;
 import com.ljn.aigame.domain.Block;
 import com.ljn.aigame.domain.ReciteLog;
+import com.ljn.aigame.engine.BlockMatrxEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,7 +198,7 @@ public class GameUtils {
      */
     public static int generateNextAIPos(Context context, List<Block> blockList) {
         //根据当前的棋盘形式  去匹配数据库中可能性最大的结果
-        List<ReciteLog> allXWinLogs = new LogDao(context).findAllXWinLogs();
+        List<ReciteLog> allXWinLogs = new LogDao(context).findAllAnalyseXWinLogs();
         List<Integer> currentXIndexList = getXorOIndexList(getLogStringByBlockList(blockList), Block.BLOCK_X);
         List<Integer> currentOIndexList = getXorOIndexList(getLogStringByBlockList(blockList), Block.BLOCK_O);
 
@@ -244,5 +245,28 @@ public class GameUtils {
         }
 
         return aiNextPos;
+    }
+
+    /**
+     * 获取和当前获胜相反的ReciteLog
+     *
+     * @param log
+     * @return
+     */
+    public static ReciteLog getReverseReciteLog(ReciteLog log) {
+        char char_x = String.valueOf(Block.BLOCK_X).charAt(0);
+        char char_o = String.valueOf(Block.BLOCK_O).charAt(0);
+        if (log.getWinType() == BlockMatrxEngine.O_WIN) {
+            log.setWinType(BlockMatrxEngine.X_WIN);
+            String reciteLog = log.getReciteLog();
+            reciteLog = reciteLog.replace(char_x, char_o);
+            log.setReciteLog(reciteLog);
+        } else if (log.getWinType() == BlockMatrxEngine.X_WIN) {
+            log.setWinType(BlockMatrxEngine.O_WIN);
+            String reciteLog = log.getReciteLog();
+            reciteLog = reciteLog.replace(char_o, char_x);
+            log.setReciteLog(reciteLog);
+        }
+        return log;
     }
 }

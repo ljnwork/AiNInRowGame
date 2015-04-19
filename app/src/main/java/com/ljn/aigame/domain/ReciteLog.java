@@ -42,4 +42,5 @@ public class ReciteLog {
     public void setReciteLog(String reciteLog) {
         this.reciteLog = reciteLog;
     }
+
 }

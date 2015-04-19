@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.ljn.aigame.domain.ReciteLog;
 import com.ljn.aigame.engine.BlockMatrxEngine;
+import com.ljn.aigame.utils.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,25 @@ public class LogDao {
         query.close();
         db.close();
         return logs;
+    }
+
+    /**
+     * 获取所有分析过的数据  即掌握对手的策略 将对手赢的走法认为是自己成功的走法
+     *
+     * @return
+     */
+    public List<ReciteLog> findAllAnalyseXWinLogs() {
+        List<ReciteLog> allAnalysedLogs = findAllLogs();
+        List<ReciteLog> resultLogs = new ArrayList<ReciteLog>();
+        for (ReciteLog reciteLog : allAnalysedLogs) {
+            if (reciteLog.getWinType() == BlockMatrxEngine.O_WIN) {
+                reciteLog = GameUtils.getReverseReciteLog(reciteLog);
+                resultLogs.add(reciteLog);
+            } else if (reciteLog.getWinType() == BlockMatrxEngine.X_WIN) {
+                resultLogs.add(reciteLog);
+            }
+        }
+        return resultLogs;
     }
 
     public List<ReciteLog> findAllXWinLogs() {
