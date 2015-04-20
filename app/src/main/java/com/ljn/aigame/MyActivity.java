@@ -1,5 +1,6 @@
 package com.ljn.aigame;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ljn.aigame.activity.SettingActivity;
 import com.ljn.aigame.adapter.GameGridAdapter;
 import com.ljn.aigame.db.LogDao;
 import com.ljn.aigame.domain.Block;
@@ -32,8 +34,7 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     private TextView mOStepCountTextView;
     private BlockMatrxEngine mGameEngine;
     private Button mRestartButton;
-    private Button mClearlogButton;
-    private int mReciteID = 0;
+    private Button mGoSettingButton;
     private boolean mIsGameFinished = false;
     private TextView mReciteLogTextView;
     private LogDao mLogDao;
@@ -49,10 +50,10 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         mOStepCountTextView = (TextView) findViewById(R.id.tv_o_stepcount);
         mReciteLogTextView = (TextView) findViewById(R.id.tv_recitelog);
         mRestartButton = (Button) findViewById(R.id.bt_restart);
-        mClearlogButton = (Button) findViewById(R.id.bt_clear);
+        mGoSettingButton = (Button) findViewById(R.id.bt_gosetting);
         mModeSwitchRadioGroup = (RadioGroup) findViewById(R.id.rg_mode_switch);
-        clearReciteLog();
-        initData();
+        mLogDao = new LogDao(MyActivity.this);
+        reLoadData();
         setListener();
     }
 
@@ -61,7 +62,7 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     private int mXStepCount = 0;
 
     private void setListener() {
-        mClearlogButton.setOnClickListener(this);
+        mGoSettingButton.setOnClickListener(this);
         mRestartButton.setOnClickListener(this);
         mModeSwitchRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -100,11 +101,11 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         if (mIsUserPlay) {
             mGameAdapter.getItem(pos).setBlockStats(Block.BLOCK_O);
             mOStepCount++;
-            judgeWhoIsWin(pos,Block.BLOCK_O);
+            judgeWhoIsWin(pos, Block.BLOCK_O);
         } else {
             mGameAdapter.getItem(pos).setBlockStats(Block.BLOCK_X);
             mXStepCount++;
-            judgeWhoIsWin(pos,Block.BLOCK_X);
+            judgeWhoIsWin(pos, Block.BLOCK_X);
         }
 
         mXStepCountTextView.setText("x step:" + mXStepCount);
@@ -112,15 +113,8 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         mIsUserPlay = !mIsUserPlay;
 
 
-
         mGameAdapter.notifyDataSetChanged();
         return;
-    }
-
-    private void clearReciteLog() {
-        GameUtils.deleteReciteLog(MyActivity.this);
-        mReciteID = 0;
-        mReciteLogTextView.setText(GameUtils.getReciteLogs(MyActivity.this));
     }
 
     private void aiTurn() {
@@ -129,8 +123,8 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     }
 
 
-    private void judgeWhoIsWin(int pos,int blockType) {
-        int winner = mGameEngine.getWinner(pos,blockType);
+    private void judgeWhoIsWin(int pos, int blockType) {
+        int winner = mGameEngine.getWinner(pos, blockType);
         if (winner == BlockMatrxEngine.O_WIN) {
             Toast.makeText(getApplicationContext(), "O WIN", Toast.LENGTH_SHORT).show();
             recordGameLog(winner);
@@ -148,8 +142,8 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
 
     private void recordGameLog(int winType) {
         String log = getCurrentLogString();
-        mLogDao.addLog(new ReciteLog(mReciteID, log, winType));
-        mReciteID++;
+        mLogDao.addLog(new ReciteLog(BlockMatrxEngine.RECITE_COUNT, log, winType));
+        BlockMatrxEngine.RECITE_COUNT++;
         mReciteLogTextView.setText(GameUtils.getReciteLogs(MyActivity.this));
     }
 
@@ -158,7 +152,7 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     }
 
 
-    private void initData() {
+    private void reLoadData() {
         mIsGameFinished = false;
         mIsUserPlay = true;
         mBlockList = new ArrayList<Block>();
@@ -170,18 +164,31 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         mXStepCount = mOStepCount = 0;
         mXStepCountTextView.setText("x step:" + mXStepCount);
         mOStepCountTextView.setText("o step:" + mOStepCount);
+        mGameGridView.setNumColumns(BlockMatrxEngine.ROW_COUNT);
         mGameEngine = new BlockMatrxEngine(mBlockList);
-        mLogDao = new LogDao(MyActivity.this);
+        mReciteLogTextView.setText(GameUtils.getReciteLogs(MyActivity.this));
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.bt_clear:
-                clearReciteLog();
+            case R.id.bt_gosetting:
+                startActivityForResult(new Intent(MyActivity.this, SettingActivity.class), SettingActivity.SETTING_ACTIVITY_REQC);
                 break;
             case R.id.bt_restart:
-                initData();
+                reLoadData();
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (resultCode) {
+            case SettingActivity.SETTING_ACTIVITY_REQC:
+                if (data.getBooleanExtra("IS_SETTING_CONFIRM", false)) {
+                    reLoadData();
+                }
                 break;
         }
     }

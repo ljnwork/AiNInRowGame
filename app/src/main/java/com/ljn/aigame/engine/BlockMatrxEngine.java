@@ -13,8 +13,10 @@ public class BlockMatrxEngine {
     public static final int NO_WINNER = 0;
     public static final int O_WIN = 1;
     public static final int X_WIN = 2;
-    public static final int ROW_COUNT = 14;//14 x 14 的棋盘
-    public static final int COUNT_OF_WIN_PIECE = 5;//赢 需要连成一条线的棋子个数
+    public static int ROW_COUNT = 14;//14 x 14 的棋盘
+    public static int COUNT_OF_WIN_PIECE = 5;//赢 需要连成一条线的棋子个数
+
+    public static int RECITE_COUNT = 0;
     private List<Block> blockList;
 
     public BlockMatrxEngine(List<Block> blockList) {

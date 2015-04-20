@@ -44,10 +44,10 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:text="clear"
+        android:text="setting"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:id="@+id/bt_clear"
+        android:id="@+id/bt_gosetting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
