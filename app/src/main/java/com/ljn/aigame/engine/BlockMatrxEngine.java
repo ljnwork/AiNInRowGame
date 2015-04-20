@@ -148,7 +148,14 @@ public class BlockMatrxEngine {
      *
      * @return
      */
-    public int getWinner() {
+    public int getWinner(int pos,int blockType) {
+
+        // 这里不要遍历每一列 只要便利当前列就可以
+        // 取的pos对应的行号 列号 斜对角线的行列号
+        int rowIndex = getRowIndexByPos(pos);
+        int cosIndex = getCosIndexByPos(pos);
+        int ltrbIndex = getLTtoRBListIndexByPos(pos);
+        int rtlbIndex = getRTtoLBListIndexByPos(pos);
 
         for (int i = 0; i < ROW_COUNT; i++) {
             if (getRowXBlockCount(i) == COUNT_OF_WIN_PIECE || getCosXBlockCount(i) == COUNT_OF_WIN_PIECE) {
@@ -167,6 +174,32 @@ public class BlockMatrxEngine {
         }
 
         return NO_WINNER;
+    }
+
+    private int getRTtoLBListIndexByPos(int pos) {
+        return 0;
+    }
+
+    private int getLTtoRBListIndexByPos(int pos) {
+        return 0;
+    }
+
+    /**
+     * 根据位置 获取所在的行号
+     * @param pos
+     * @return
+     */
+    private int getRowIndexByPos(int pos) {
+        return pos / ROW_COUNT;
+    }
+
+    /**
+     * 根据位置 获取所在的列号
+     * @param pos
+     * @return
+     */
+    private int getCosIndexByPos(int pos) {
+        return pos % ROW_COUNT;
     }
 
     public static final int IS_ROW = 0;

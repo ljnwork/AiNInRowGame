@@ -92,24 +92,26 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
         }
     }
 
-    private void oneTurn(int i) {
-        if (mGameAdapter.getItem(i).getBlockStats() != Block.BLOCK_BLANK || mIsGameFinished) {
+    private void oneTurn(int pos) {
+        if (mGameAdapter.getItem(pos).getBlockStats() != Block.BLOCK_BLANK || mIsGameFinished) {
             return;
         }
 
         if (mIsUserPlay) {
-            mGameAdapter.getItem(i).setBlockStats(Block.BLOCK_O);
+            mGameAdapter.getItem(pos).setBlockStats(Block.BLOCK_O);
             mOStepCount++;
+            judgeWhoIsWin(pos,Block.BLOCK_O);
         } else {
-            mGameAdapter.getItem(i).setBlockStats(Block.BLOCK_X);
+            mGameAdapter.getItem(pos).setBlockStats(Block.BLOCK_X);
             mXStepCount++;
+            judgeWhoIsWin(pos,Block.BLOCK_X);
         }
 
         mXStepCountTextView.setText("x step:" + mXStepCount);
         mOStepCountTextView.setText("o step:" + mOStepCount);
         mIsUserPlay = !mIsUserPlay;
 
-        judgeWhoIsWin();
+
 
         mGameAdapter.notifyDataSetChanged();
         return;
@@ -127,8 +129,8 @@ public class MyActivity extends ActionBarActivity implements View.OnClickListene
     }
 
 
-    private void judgeWhoIsWin() {
-        int winner = mGameEngine.getWinner();
+    private void judgeWhoIsWin(int pos,int blockType) {
+        int winner = mGameEngine.getWinner(pos,blockType);
         if (winner == BlockMatrxEngine.O_WIN) {
             Toast.makeText(getApplicationContext(), "O WIN", Toast.LENGTH_SHORT).show();
             recordGameLog(winner);
