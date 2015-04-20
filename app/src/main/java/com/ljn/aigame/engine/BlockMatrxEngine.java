@@ -148,44 +148,57 @@ public class BlockMatrxEngine {
      *
      * @return
      */
-    public int getWinner(int pos,int blockType) {
-
+    public int getWinner(int pos, int blockType) {
         // 这里不要遍历每一列 只要便利当前列就可以
         // 取的pos对应的行号 列号 斜对角线的行列号
         int rowIndex = getRowIndexByPos(pos);
         int cosIndex = getCosIndexByPos(pos);
         int ltrbIndex = getLTtoRBListIndexByPos(pos);
         int rtlbIndex = getRTtoLBListIndexByPos(pos);
-
-        for (int i = 0; i < ROW_COUNT; i++) {
-            if (getRowXBlockCount(i) == COUNT_OF_WIN_PIECE || getCosXBlockCount(i) == COUNT_OF_WIN_PIECE) {
-                return X_WIN;
-            } else if (getRowOBlockCount(i) == COUNT_OF_WIN_PIECE || getCosOBlockCount(i) == COUNT_OF_WIN_PIECE || getLTtoRBOBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(i) == COUNT_OF_WIN_PIECE) {
-                return O_WIN;
-            }
+        if (getRowXBlockCount(rowIndex) == COUNT_OF_WIN_PIECE || getCosXBlockCount(cosIndex) == COUNT_OF_WIN_PIECE
+                || getLTtoRBXBlockCount(ltrbIndex) == COUNT_OF_WIN_PIECE || getRTtoLBXBlockCount(rtlbIndex) == COUNT_OF_WIN_PIECE) {
+            return X_WIN;
+        } else if ((getRowOBlockCount(rowIndex) == COUNT_OF_WIN_PIECE || getCosOBlockCount(cosIndex) == COUNT_OF_WIN_PIECE
+                || getLTtoRBXBlockCount(ltrbIndex) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(rtlbIndex) == COUNT_OF_WIN_PIECE)) {
+            return O_WIN;
         }
-
-        for (int i = 0; i < ROW_COUNT * 2 - 1; i++) {
-            if (getLTtoRBXBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBXBlockCount(i) == COUNT_OF_WIN_PIECE) {
-                return X_WIN;
-            } else if (getLTtoRBOBlockCount(i) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(i) == COUNT_OF_WIN_PIECE) {
-                return O_WIN;
-            }
-        }
-
         return NO_WINNER;
     }
 
+    /**
+     * 根据位置 获取按照右上角到左下角排布的行号
+     *
+     * @param pos
+     * @return
+     */
     private int getRTtoLBListIndexByPos(int pos) {
-        return 0;
+        int rowIndexByPos = getRowIndexByPos(pos);
+        int cosIndexByPos = getCosIndexByPos(pos);
+        int index = rowIndexByPos + cosIndexByPos;
+        return index;
     }
 
+    /**
+     * 根据位置 获取按照左上角到右下角排布的行号
+     *
+     * @param pos
+     * @return
+     */
     private int getLTtoRBListIndexByPos(int pos) {
-        return 0;
+        int rowIndexByPos = getRowIndexByPos(pos);
+        int cosIndexByPos = getCosIndexByPos(pos);
+        int index = 0;
+        if (rowIndexByPos < ROW_COUNT - 1) {
+            index = rowIndexByPos - (ROW_COUNT - 1 - cosIndexByPos);
+        } else {
+            index = rowIndexByPos + (ROW_COUNT - 1 - cosIndexByPos);
+        }
+        return index;
     }
 
     /**
      * 根据位置 获取所在的行号
+     *
      * @param pos
      * @return
      */
@@ -195,6 +208,7 @@ public class BlockMatrxEngine {
 
     /**
      * 根据位置 获取所在的列号
+     *
      * @param pos
      * @return
      */
