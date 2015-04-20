@@ -161,7 +161,7 @@ public class BlockMatrxEngine {
                 || getLTtoRBXBlockCount(ltrbIndex) == COUNT_OF_WIN_PIECE || getRTtoLBXBlockCount(rtlbIndex) == COUNT_OF_WIN_PIECE) {
             return X_WIN;
         } else if ((getRowOBlockCount(rowIndex) == COUNT_OF_WIN_PIECE || getCosOBlockCount(cosIndex) == COUNT_OF_WIN_PIECE
-                || getLTtoRBXBlockCount(ltrbIndex) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(rtlbIndex) == COUNT_OF_WIN_PIECE)) {
+                || getLTtoRBOBlockCount(ltrbIndex) == COUNT_OF_WIN_PIECE || getRTtoLBOBlockCount(rtlbIndex) == COUNT_OF_WIN_PIECE)) {
             return O_WIN;
         }
         return NO_WINNER;
@@ -189,12 +189,7 @@ public class BlockMatrxEngine {
     private int getLTtoRBListIndexByPos(int pos) {
         int rowIndexByPos = getRowIndexByPos(pos);
         int cosIndexByPos = getCosIndexByPos(pos);
-        int index = 0;
-        if (rowIndexByPos < ROW_COUNT - 1) {
-            index = rowIndexByPos - (ROW_COUNT - 1 - cosIndexByPos);
-        } else {
-            index = rowIndexByPos + (ROW_COUNT - 1 - cosIndexByPos);
-        }
+        int index = cosIndexByPos + (ROW_COUNT - 1 - rowIndexByPos);
         return index;
     }
 
